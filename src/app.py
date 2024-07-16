@@ -45,6 +45,81 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route('/user/favorites', methods=['GET'])
+def get_user_fav():
+    
+    users = User.query.all()
+    
+    user_favorites = []
+    
+    for user in users:
+        user_favorites.append({
+            "user_id": user.id,
+            "username": user.username,
+            "character_favorites": [character_fav.character.serialize() for character_fav in user.character_fav],
+            "planet_favorites": [planet_fav.planet.serialize() for planet_fav in user.planet_fav]
+        })
+    
+    return jsonify(user_favorites), 200
+
+@app.route('/character', methods=['GET'])
+def get_character():
+    characters = characters.query.all() 
+    resultados = list(map(lambda item: item.serialize(), characters))
+    
+    if not characters:
+        return jsonify(message="No se han encontrado character"), 404
+
+    return jsonify(resultados), 200
+
+@app.route('/character/<int:character_id>', methods=['GET'])
+def get_character2(character_id):
+    character = character.query.get(character_id)  
+
+    if character is None:
+        return jsonify(message="Personaje no encontrado"), 404
+
+    return jsonify(character.serialize()), 200
+
+@app.route('/character_fav', methods=['GET'])
+def get_character_fav():
+    characters_fav = characters_fav.query.all() 
+    resultados = list(map(lambda item: item.serialize(), characters_fav))
+    
+    if not characters_fav:
+        return jsonify(message="No se han encontrado character"), 404
+
+    return jsonify(resultados), 200
+
+@app.route('/planet', methods=['GET'])
+def get_planet():
+    planets = planets.query.all() 
+    resultados = list(map(lambda item: item.serialize(), planets))
+    
+    if not planets:
+        return jsonify(message="No se han encontrado planets"), 404
+
+    return jsonify(resultados), 200
+
+@app.route('/planet/<int:planet_id>', methods=['GET'])
+def get_planet2(planet_id):
+    planet = planet.query.get(planet_id)  
+
+    if planet is None:
+        return jsonify(message="Planeta no encontrado"), 404
+
+    return jsonify(planet.serialize()), 200
+
+@app.route('/planet_fav', methods=['GET'])
+def get_planet_fav():
+    planets_fav = planets_fav.query.all() 
+    resultados = list(map(lambda item: item.serialize(), planets_fav))
+    
+    if not planets_fav:
+        return jsonify(message="No se han encontrado planet"), 404
+
+    return jsonify(resultados), 200
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
